@@ -1,0 +1,6 @@
+requests==2.32.3
+beautifulsoup4==4.13.4
+pandas
+openpyxl
+tqdm
+requests-html==0.10.0
