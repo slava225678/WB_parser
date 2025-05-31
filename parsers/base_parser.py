@@ -9,8 +9,8 @@ class BaseParser(ABC):
         str, category:
         Optional[str] = None
     ) -> Dict[str, str]:
-        """
+        '''
         По артикулу получает данные с сайта.
         Возвращает словарь с ключами — названиями столбцов
-        """
+        '''
         pass

@@ -1,12 +1,28 @@
-import requests
 from typing import Dict, Optional
 from urllib.parse import quote
 
-from .base_parser import BaseParser
+import requests
+
 from config import SEARCH_URL
+
+from .base_parser import BaseParser
 
 
 class WBParser(BaseParser):
+    '''
+    Класс для получения и парсинга карточек товаров с Wildberries.
+
+    Использует артикул продавца для поиска и
+    извлечения информации о товаре,
+    включая наименование, описание, бренд, фото и
+    характеристики (в том числе сгруппированные).
+
+    Методы:
+    - fetch_data(article, category): Выполняет поиск товара
+    по артикулу и возвращает распарсенные данные.
+    - _parse_card_json(card, basket): Вспомогательный метод
+    для извлечения информации из JSON-карточки.
+    '''
 
     def fetch_data(
         self,
@@ -49,13 +65,16 @@ class WBParser(BaseParser):
 
         return {}
 
-    def _parse_card_json(self, card: dict, basket: Optional[int] = None) -> Dict[str, str]:
+    def _parse_card_json(
+            self,
+            card: dict,
+            basket: Optional[int] = None
+    ) -> Dict[str, str]:
         result = {}
 
         result["Наименование"] = card.get("imt_name")
         result["Описание"] = card.get("description")
         result["Бренд"] = card.get("vendor_code")
-        # result["Фото"] = card.get("media")
 
         # 🖼️ Генерация ссылок на фото
         if basket is not None and "media" in card and "nm_id" in card:
@@ -64,7 +83,8 @@ class WBParser(BaseParser):
             part_id = nm_id // 1000
             photo_count = card["media"]["photo_count"]
             photo_links = [
-                f"https://basket-{basket}.wbbasket.ru/vol{vol_id}/part{part_id}/{nm_id}/images/big/{i}.webp"
+                f"https://basket-{basket}.wbbasket.ru/"
+                f"vol{vol_id}/part{part_id}/{nm_id}/images/big/{i}.webp"
                 for i in range(1, photo_count + 1)
             ]
             # Объединяем все ссылки в одну строку, разделяя переносом строки
